@@ -1,0 +1,31 @@
+<div class="pitch-detector-container">
+  <div class="pitch-detector-header">
+    <h1>Voice Pitch Detector</h1>
+    <p>Sing or speak into your microphone to detect the musical note</p>
+  </div>
+
+  <div class="pitch-display" [style.backgroundColor]="getColorForNote(detectedNote)">
+    <div class="note">{{ detectedNote || '---' }}</div>
+    <div class="frequency" *ngIf="detectedFrequency">{{ detectedFrequency }} Hz</div>
+    <div class="clarity" *ngIf="clarity">Clarity: {{ clarity }}%</div>
+  </div>
+
+  <div class="waveform-container">
+    <canvas #canvas></canvas>
+  </div>
+
+  <div class="controls">
+    <button 
+      class="toggle-button" 
+      (click)="toggleListening()" 
+      [class.listening]="isListening">
+      {{ isListening ? 'Stop' : 'Start' }} Listening
+    </button>
+  </div>
+
+  <div class="note-scale">
+    <div class="note-item" *ngFor="let note of notes" [style.backgroundColor]="getColorForNote(note)">
+      {{ note }}
+    </div>
+  </div>
+</div>
