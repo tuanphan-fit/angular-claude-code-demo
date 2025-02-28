@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PitchDetector } from 'pitchy';
 
@@ -11,6 +11,7 @@ import { PitchDetector } from 'pitchy';
 })
 export class PitchDetectorComponent implements OnInit, OnDestroy {
   @ViewChild('canvas', { static: true }) canvasRef!: ElementRef<HTMLCanvasElement>;
+  @Output() pitchDetected = new EventEmitter<{note: string, frequency: number, clarity: number}>();
   
   audioContext: AudioContext | null = null;
   analyser: AnalyserNode | null = null;
@@ -114,6 +115,13 @@ export class PitchDetectorComponent implements OnInit, OnDestroy {
       
       // Draw the waveform
       this.drawWaveform(buffer);
+      
+      // Emit the detected pitch for parent components
+      this.pitchDetected.emit({
+        note: this.detectedNote,
+        frequency: this.detectedFrequency,
+        clarity: this.clarity / 100 // Convert back to 0-1 range
+      });
     }
     
     this.rafId = requestAnimationFrame(() => this.updatePitch());

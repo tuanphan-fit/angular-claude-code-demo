@@ -178,7 +178,29 @@
 </style>
 
 <main class="main">
-  <app-pitch-detector></app-pitch-detector>
+  <div class="app-header">
+    <h1>{{ title }}</h1>
+    <div class="mode-toggle">
+      <button 
+        [class.active]="!showChallenge" 
+        (click)="showChallenge = false">
+        Free Mode
+      </button>
+      <button 
+        [class.active]="showChallenge" 
+        (click)="showChallenge = true">
+        Challenge Mode
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="!showChallenge" class="detector-container">
+    <app-pitch-detector></app-pitch-detector>
+  </div>
+
+  <div *ngIf="showChallenge" class="challenge-container">
+    <app-pitch-challenge></app-pitch-challenge>
+  </div>
 </main>
 
 <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->

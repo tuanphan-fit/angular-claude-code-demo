@@ -1,0 +1,373 @@
+.pitch-challenge-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Header Styles */
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+  
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+  }
+  
+  p {
+    font-size: 1.1rem;
+    color: #666;
+  }
+}
+
+/* Button Styles */
+button {
+  border: none;
+  border-radius: 2rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: white;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.start-btn {
+  background-color: #4285f4;
+  &:hover { background-color: #3367d6; }
+}
+
+.cancel-btn {
+  background-color: #ea4335;
+  &:hover { background-color: #d33426; }
+}
+
+.results-btn {
+  background-color: #34a853;
+  &:hover { background-color: #2a8943; }
+}
+
+.back-btn {
+  background-color: #666;
+  &:hover { background-color: #555; }
+}
+
+.view-btn {
+  background-color: #4285f4;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+}
+
+.delete-btn {
+  background-color: #ea4335;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+}
+
+/* Control Panel */
+.control-panel {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+/* Challenge Progress */
+.challenge-progress {
+  margin-bottom: 2rem;
+  
+  .note-counter {
+    text-align: center;
+    margin-bottom: 1rem;
+    
+    span {
+      font-size: 1rem;
+      color: #666;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+    
+    .progress-bar {
+      height: 0.6rem;
+      background-color: #eee;
+      border-radius: 0.3rem;
+      margin: 0 auto;
+      max-width: 300px;
+      
+      .progress {
+        height: 100%;
+        background: linear-gradient(to right, #4285f4, #34a853);
+        border-radius: 0.3rem;
+        transition: width 0.3s ease;
+      }
+    }
+  }
+}
+
+/* Target Note Display */
+.target-note {
+  text-align: center;
+  margin-bottom: 2rem;
+  
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #444;
+  }
+  
+  .note-display {
+    font-size: 5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    padding: 2rem;
+    border-radius: 1rem;
+    background-color: #f5f5f5;
+    display: inline-block;
+    min-width: 200px;
+    color: #333;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    
+    &[data-note^="C"] { background-color: #FFE0E0; }
+    &[data-note^="D"] { background-color: #FFE8CC; }
+    &[data-note^="E"] { background-color: #FFFACC; }
+    &[data-note^="F"] { background-color: #E0FFCC; }
+    &[data-note^="G"] { background-color: #CCF5FF; }
+    &[data-note^="A"] { background-color: #E3CCFF; }
+    &[data-note^="B"] { background-color: #FFCCF5; }
+  }
+  
+  .frequency {
+    font-size: 1.1rem;
+    color: #666;
+  }
+}
+
+/* Feedback */
+.feedback {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  min-height: 2.5rem;
+  
+  p {
+    font-size: 1.2rem;
+    margin: 0;
+  }
+  
+  .success-message {
+    color: #34a853;
+    font-weight: 500;
+  }
+}
+
+/* Instructions */
+.instructions {
+  background-color: #f9f9f9;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  
+  h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #333;
+  }
+  
+  ol {
+    margin: 0;
+    padding-left: 1.5rem;
+    
+    li {
+      margin-bottom: 0.5rem;
+      color: #444;
+    }
+  }
+}
+
+/* Challenge Results */
+.challenge-results {
+  background-color: #f9f9f9;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  
+  h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #333;
+  }
+  
+  .summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    
+    .score-item {
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      
+      .label {
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 0.5rem;
+      }
+      
+      .value {
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+/* Results View */
+.results-view {
+  .no-results {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    
+    h1 {
+      margin: 0;
+    }
+  }
+  
+  /* Results Table */
+  .results-table, .attempts-table {
+    background-color: white;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+    
+    .table-header {
+      display: flex;
+      background-color: #f5f5f5;
+      padding: 1rem;
+      font-weight: 600;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .result-row, .attempt-row {
+      display: flex;
+      padding: 1rem;
+      border-bottom: 1px solid #eee;
+      
+      &:last-child {
+        border-bottom: none;
+      }
+      
+      &:hover {
+        background-color: #f9f9f9;
+      }
+    }
+    
+    .col {
+      flex: 1;
+      
+      &.date { flex: 2; }
+      &.actions { flex: 1; display: flex; gap: 0.5rem; }
+      
+      &.success { color: #34a853; }
+      &.failure { color: #ea4335; }
+    }
+  }
+  
+  /* Result Detail */
+  .result-detail {
+    .result-summary {
+      background-color: white;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      
+      .summary-header {
+        margin-bottom: 1.5rem;
+        
+        h3 {
+          margin: 0;
+          color: #333;
+        }
+      }
+      
+      .summary-scores {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        
+        .score-card {
+          text-align: center;
+          padding: 1rem;
+          
+          .score-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+          }
+          
+          .score-label {
+            font-size: 0.9rem;
+            color: #666;
+          }
+        }
+      }
+    }
+    
+    .attempts-table {
+      h3 {
+        padding: 1rem 1rem 0;
+        margin: 0;
+      }
+    }
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .pitch-challenge-container {
+    padding: 1rem;
+  }
+  
+  .control-panel {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .results-view {
+    .header {
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .results-table, .attempts-table {
+      .table-header, .result-row, .attempt-row {
+        font-size: 0.9rem;
+      }
+    }
+  }
+}

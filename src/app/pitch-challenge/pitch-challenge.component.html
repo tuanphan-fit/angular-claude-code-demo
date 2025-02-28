@@ -1,0 +1,194 @@
+<div class="pitch-challenge-container">
+  <!-- Challenge Mode -->
+  <div *ngIf="!showResults" class="challenge-mode">
+    <!-- Header Section -->
+    <div class="header">
+      <h1>Pitch Challenge</h1>
+      <p *ngIf="!challengeState?.isActive">Test your singing skills! Sing the shown notes accurately.</p>
+    </div>
+
+    <!-- Control Panel -->
+    <div class="control-panel">
+      <button 
+        *ngIf="!challengeState?.isActive" 
+        (click)="startChallenge()" 
+        class="start-btn">
+        Start New Challenge
+      </button>
+      <button 
+        *ngIf="challengeState?.isActive" 
+        (click)="cancelChallenge()" 
+        class="cancel-btn">
+        Cancel Challenge
+      </button>
+      <button 
+        (click)="viewResults()" 
+        class="results-btn">
+        View Previous Results
+      </button>
+    </div>
+
+    <!-- Challenge Progress -->
+    <div *ngIf="challengeState.isActive" class="challenge-progress">
+      <div class="note-counter">
+        <span>Note {{ challengeState.currentNoteIndex + 1 }}/{{ challengeState.notes.length }}</span>
+        <div class="progress-bar">
+          <div class="progress" [style.width]="getProgressPercentage() + '%'"></div>
+        </div>
+      </div>
+      
+      <!-- Target Note Display -->
+      <div class="target-note" *ngIf="challengeState.notes.length > 0">
+        <h2>Sing this note:</h2>
+        <div class="note-display" [attr.data-note]="getCurrentTargetNote()">
+          {{ getCurrentTargetNote() }}
+        </div>
+        <div class="frequency">{{ targetNoteFrequency.toFixed(2) }} Hz</div>
+      </div>
+      
+      <!-- Instructions and Feedback -->
+      <div class="feedback">
+        <p *ngIf="!isCurrentNoteReached()">Sing the note and hold it steady!</p>
+        <p *ngIf="isCurrentNoteReached()" class="success-message">Great! Keep holding the note steady...</p>
+      </div>
+    </div>
+
+    <!-- Pitch Detector Component -->
+    <app-pitch-detector 
+      *ngIf="challengeState.isActive"
+      (pitchDetected)="onPitchDetected($event)">
+    </app-pitch-detector>
+    
+    <!-- Instructions when not in a challenge -->
+    <div *ngIf="!challengeState.isActive && challengeState.attempts.length === 0" class="instructions">
+      <h3>How it works:</h3>
+      <ol>
+        <li>Click "Start New Challenge" to begin</li>
+        <li>The app will show you a musical note to sing</li>
+        <li>Try to match the note with your voice</li>
+        <li>Hold the note steady to advance to the next one</li>
+        <li>Complete all 10 notes to get your score</li>
+      </ol>
+    </div>
+    
+    <!-- Last challenge results -->
+    <div *ngIf="!challengeState.isActive && challengeState.attempts.length > 0" class="challenge-results">
+      <h3>Last Challenge Results</h3>
+      <div class="summary">
+        <div class="score-item">
+          <span class="label">Success Rate:</span>
+          <span class="value" [style.color]="getScoreColor(getSuccessRate())">
+            {{ getSuccessRate().toFixed(0) }}%
+          </span>
+        </div>
+        <div class="score-item">
+          <span class="label">Avg. Time to Reach:</span>
+          <span class="value">
+            {{ formatTime(getAverageTimeToReach()) }}
+          </span>
+        </div>
+        <div class="score-item">
+          <span class="label">Avg. Stability:</span>
+          <span class="value" [style.color]="getScoreColor(getAverageStability())">
+            {{ getAverageStability().toFixed(1) }}
+          </span>
+        </div>
+        <div class="score-item">
+          <span class="label">Avg. Accuracy:</span>
+          <span class="value" [style.color]="getScoreColor(getAverageAccuracy())">
+            {{ getAverageAccuracy().toFixed(1) }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Results View -->
+  <div *ngIf="showResults" class="results-view">
+    <!-- Results List -->
+    <div *ngIf="!selectedResult" class="results-list">
+      <div class="header">
+        <h1>Challenge History</h1>
+        <button (click)="backToChallenge()" class="back-btn">Back to Challenge</button>
+      </div>
+      
+      <div *ngIf="results.length === 0" class="no-results">
+        <p>No challenge results yet. Complete a challenge to see your history.</p>
+      </div>
+      
+      <div *ngIf="results.length > 0" class="results-table">
+        <div class="table-header">
+          <div class="col date">Date</div>
+          <div class="col score">Score</div>
+          <div class="col time">Avg. Time</div>
+          <div class="col actions">Actions</div>
+        </div>
+        
+        <div *ngFor="let result of results" class="result-row">
+          <div class="col date">{{ result.date | date:'medium' }}</div>
+          <div class="col score" [style.color]="getScoreColor(result.totalScore)">{{ result.totalScore }}%</div>
+          <div class="col time">{{ formatTime(result.averageTimeToReach) }}</div>
+          <div class="col actions">
+            <button (click)="viewResult(result)" class="view-btn">View</button>
+            <button (click)="deleteResult(result.id)" class="delete-btn">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Result Detail View -->
+    <div *ngIf="selectedResult" class="result-detail">
+      <div class="header">
+        <h1>Challenge Result</h1>
+        <button (click)="backToResults()" class="back-btn">Back to Results</button>
+      </div>
+      
+      <div class="result-summary">
+        <div class="summary-header">
+          <h3>Challenge from {{ selectedResult.date | date:'medium' }}</h3>
+        </div>
+        
+        <div class="summary-scores">
+          <div class="score-card">
+            <div class="score-value" [style.color]="getScoreColor(selectedResult.totalScore || 0)">{{ selectedResult.totalScore || 0 }}%</div>
+            <div class="score-label">Overall Score</div>
+          </div>
+          <div class="score-card">
+            <div class="score-value">{{ formatTime(selectedResult.averageTimeToReach || 0) }}</div>
+            <div class="score-label">Avg. Time</div>
+          </div>
+          <div class="score-card">
+            <div class="score-value" [style.color]="getScoreColor(selectedResult.averageStability || 0)">{{ (selectedResult.averageStability || 0).toFixed(1) }}</div>
+            <div class="score-label">Stability</div>
+          </div>
+          <div class="score-card">
+            <div class="score-value" [style.color]="getScoreColor(selectedResult.averageAccuracy || 0)">{{ (selectedResult.averageAccuracy || 0).toFixed(1) }}</div>
+            <div class="score-label">Accuracy</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Detailed Results Table -->
+      <div class="attempts-table" *ngIf="selectedResult.attempts && selectedResult.attempts.length > 0">
+        <h3>Detailed Results</h3>
+        <div class="table-header">
+          <div class="col note">Target Note</div>
+          <div class="col time">Time to Reach</div>
+          <div class="col stability">Stability</div>
+          <div class="col accuracy">Accuracy</div>
+          <div class="col result">Result</div>
+        </div>
+        
+        <div *ngFor="let attempt of selectedResult.attempts; let i = index" class="attempt-row">
+          <div class="col note">{{ attempt.targetNote }}</div>
+          <div class="col time">{{ formatTime(attempt.timeToReachMs) }}</div>
+          <div class="col stability" [style.color]="getScoreColor(attempt.stabilityScore)">{{ attempt.stabilityScore.toFixed(1) }}</div>
+          <div class="col accuracy" [style.color]="getScoreColor(attempt.accuracyScore)">{{ attempt.accuracyScore.toFixed(1) }}</div>
+          <div class="col result" [class.success]="attempt.reachedNote" [class.failure]="!attempt.reachedNote">
+            {{ attempt.reachedNote ? 'Success' : 'Failed' }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
