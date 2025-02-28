@@ -151,6 +151,59 @@ button {
   .frequency {
     font-size: 1.1rem;
     color: #666;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Tuning Meter Styles */
+  .tuning-meter {
+    width: 80%;
+    max-width: 400px;
+    margin: 1rem auto;
+    
+    .meter-scale {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      padding: 0 10px;
+      margin-bottom: 5px;
+      
+      .marker {
+        font-size: 0.8rem;
+        color: #888;
+        
+        &.center {
+          font-weight: bold;
+          color: #333;
+        }
+      }
+    }
+    
+    .meter-bar {
+      height: 25px;
+      width: 100%;
+      background-color: #eee;
+      border-radius: 12px;
+      position: relative;
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+      
+      .indicator {
+        position: absolute;
+        height: 100%;
+        width: 12px;
+        border-radius: 6px;
+        top: 0;
+        transition: left 0.2s ease, background-color 0.2s ease;
+        transform: translateX(-50%);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+    }
+    
+    .tuning-label {
+      font-size: 0.9rem;
+      text-align: center;
+      margin-top: 8px;
+      font-weight: 500;
+    }
   }
 }
 

@@ -6,12 +6,66 @@
 
   <div class="pitch-display" [style.backgroundColor]="getColorForNote(detectedNote)">
     <div class="note">{{ detectedNote || '---' }}</div>
-    <div class="frequency" *ngIf="detectedFrequency">{{ detectedFrequency }} Hz</div>
-    <div class="clarity" *ngIf="clarity">Clarity: {{ clarity }}%</div>
+    <div class="note-info">
+      <div class="frequency" *ngIf="detectedFrequency">{{ detectedFrequency }} Hz</div>
+      <div class="clarity" *ngIf="clarity">Clarity: {{ clarity }}%</div>
+      <div class="cents" *ngIf="centDifference && detectedFrequency" [style.color]="getCentColor()">
+        {{ centDifference > 0 ? '+' : '' }}{{ centDifference }} cents
+      </div>
+    </div>
+  </div>
+  
+  <!-- Cent Meter - Visual tuning indicator -->
+  <div class="tuning-meter" *ngIf="detectedFrequency && clarity > 70">
+    <div class="meter-scale">
+      <div class="marker low">-50</div>
+      <div class="marker center">0</div>
+      <div class="marker high">+50</div>
+    </div>
+    <div class="meter-bar">
+      <div class="indicator" 
+           [style.left]="50 + (centDifference * 0.8) + '%'"
+           [style.backgroundColor]="getCentColor()">
+      </div>
+    </div>
+    <div class="tuning-label">Pitch Accuracy</div>
   </div>
 
-  <div class="waveform-container">
-    <canvas #canvas></canvas>
+  <!-- Visualization tabs -->
+  <div class="visualization-tabs">
+    <div class="tab" 
+         [class.active]="visualizationMode === 'waveform'"
+         (click)="visualizationMode = 'waveform'">
+      Waveform
+    </div>
+    <div class="tab" 
+         [class.active]="visualizationMode === 'spectrum'"
+         (click)="visualizationMode = 'spectrum'">
+      Frequency Spectrum
+    </div>
+    <div class="tab" 
+         [class.active]="visualizationMode === 'history'"
+         (click)="visualizationMode = 'history'">
+      Pitch History
+    </div>
+  </div>
+
+  <!-- Visualization container -->
+  <div class="visualization-container">
+    <!-- Waveform Visualization -->
+    <div class="waveform-container" [class.active]="visualizationMode === 'waveform'">
+      <canvas #canvas></canvas>
+    </div>
+    
+    <!-- Spectrum Visualization -->
+    <div class="spectrum-container" [class.active]="visualizationMode === 'spectrum'">
+      <canvas #spectrumCanvas></canvas>
+    </div>
+    
+    <!-- Pitch History Visualization -->
+    <div class="history-container" [class.active]="visualizationMode === 'history'">
+      <canvas #historyCanvas></canvas>
+    </div>
   </div>
 
   <div class="controls">
@@ -26,6 +80,29 @@
   <div class="note-scale">
     <div class="note-item" *ngFor="let note of notes" [style.backgroundColor]="getColorForNote(note)">
       {{ note }}
+    </div>
+  </div>
+  
+  <!-- Performance Statistics (Only shown when actively detecting pitch) -->
+  <div class="performance-stats" *ngIf="noteHistory.length > 10">
+    <h3>Performance Statistics</h3>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="stat-label">Average Clarity:</span>
+        <span class="stat-value">{{ getAverageClarity() }}%</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Pitch Stability:</span>
+        <span class="stat-value" [style.color]="getStabilityColor()">{{ getPitchStability() }}%</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Cent Deviation:</span>
+        <span class="stat-value" [style.color]="getDeviationColor()">{{ getAverageCentDeviation() }}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Note Range:</span>
+        <span class="stat-value">{{ getLowestNote() }} - {{ getHighestNote() }}</span>
+      </div>
     </div>
   </div>
 </div>

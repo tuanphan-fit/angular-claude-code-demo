@@ -5,6 +5,7 @@ export interface NoteAttempt {
   stabilityScore: number; // 0-100
   accuracyScore: number;  // 0-100
   averageFrequency: number;
+  centDifference?: number; // Pitch difference in cents (-50 to +50)
 }
 
 export interface ChallengeResult {

@@ -44,6 +44,28 @@
           {{ getCurrentTargetNote() }}
         </div>
         <div class="frequency">{{ targetNoteFrequency.toFixed(2) }} Hz</div>
+        
+        <!-- Tuning Meter (only shows when there is a current attempt) -->
+        <div class="tuning-meter" *ngIf="challengeState.currentAttempt && challengeState.currentAttempt.centDifference !== undefined">
+          <div class="meter-scale">
+            <div class="marker low">-50</div>
+            <div class="marker center">0</div>
+            <div class="marker high">+50</div>
+          </div>
+          <div class="meter-bar">
+            <div class="indicator" 
+                 [style.left]="50 + (challengeState.currentAttempt.centDifference * 0.8) + '%'"
+                 [style.backgroundColor]="getTuningColor(challengeState.currentAttempt.centDifference)">
+            </div>
+          </div>
+          <div class="tuning-label">
+            <span *ngIf="Math.abs(challengeState.currentAttempt.centDifference || 0) < 10">Perfect!</span>
+            <span *ngIf="Math.abs(challengeState.currentAttempt.centDifference || 0) >= 10 && Math.abs(challengeState.currentAttempt.centDifference || 0) < 30">Good</span>
+            <span *ngIf="Math.abs(challengeState.currentAttempt.centDifference || 0) >= 30">
+              {{ challengeState.currentAttempt.centDifference > 0 ? 'Too high' : 'Too low' }}
+            </span>
+          </div>
+        </div>
       </div>
       
       <!-- Instructions and Feedback -->
@@ -176,6 +198,7 @@
           <div class="col time">Time to Reach</div>
           <div class="col stability">Stability</div>
           <div class="col accuracy">Accuracy</div>
+          <div class="col tuning">Tuning</div>
           <div class="col result">Result</div>
         </div>
         
@@ -184,6 +207,12 @@
           <div class="col time">{{ formatTime(attempt.timeToReachMs) }}</div>
           <div class="col stability" [style.color]="getScoreColor(attempt.stabilityScore)">{{ attempt.stabilityScore.toFixed(1) }}</div>
           <div class="col accuracy" [style.color]="getScoreColor(attempt.accuracyScore)">{{ attempt.accuracyScore.toFixed(1) }}</div>
+          <div class="col tuning" *ngIf="attempt.centDifference !== undefined" [style.color]="getTuningColor(attempt.centDifference)">
+            {{ attempt.centDifference > 0 ? '+' : '' }}{{ attempt.centDifference.toFixed(0) }} cents
+          </div>
+          <div class="col tuning" *ngIf="attempt.centDifference === undefined">
+            --
+          </div>
           <div class="col result" [class.success]="attempt.reachedNote" [class.failure]="!attempt.reachedNote">
             {{ attempt.reachedNote ? 'Success' : 'Failed' }}
           </div>

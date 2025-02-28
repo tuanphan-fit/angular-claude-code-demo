@@ -69,7 +69,7 @@ export class PitchChallengeService {
   }
 
   // Process pitch detection result during an active challenge
-  processPitch(detectedNote: string, frequency: number, clarity: number): void {
+  processPitch(detectedNote: string, frequency: number, clarity: number, centDifference: number = 0): void {
     if (!this.challengeState.isActive) return;
     
     const currentTime = Date.now();
@@ -83,7 +83,9 @@ export class PitchChallengeService {
     
     // Compare detected note with target note
     const noteMatches = this.stripOctave(detectedNote) === this.stripOctave(targetNote);
-    const baseNoteMatches = this.stripOctave(detectedNote) === this.stripOctave(targetNote);
+    
+    // Track how close the pitch is to the target in cents (even if the note name doesn't match exactly)
+    const pitchAccuracy = Math.abs(centDifference) < 50;
     
     // Initialization of current attempt if needed
     if (!this.challengeState.currentAttempt && clarity > 0.8) {
@@ -93,7 +95,8 @@ export class PitchChallengeService {
         timeToReachMs: elapsedTime,
         stabilityScore: 0,
         accuracyScore: 0,
-        averageFrequency: frequency
+        averageFrequency: frequency,
+        centDifference: centDifference
       };
     }
     
@@ -104,13 +107,19 @@ export class PitchChallengeService {
         this.challengeState.currentAttempt.reachedNote = true;
         this.challengeState.currentAttempt.timeToReachMs = elapsedTime;
       }
+      
+      // Update cent difference (for more precise tuning feedback)
+      if (noteMatches) {
+        this.challengeState.currentAttempt.centDifference = centDifference;
+      }
     }
     
     // Check if we should move to the next note (either reached success or timed out)
     const isStable = this.calculateStability(targetNote) >= this.challengeState.stabilityThreshold;
+    const isPitchAccurate = Math.abs(centDifference) < 30; // Consider pitch accurate if within 30 cents
     const hasTimedOut = elapsedTime >= this.maxAttemptTimeMs;
     
-    if ((isStable && noteMatches) || hasTimedOut) {
+    if ((isStable && noteMatches && isPitchAccurate) || hasTimedOut) {
       this.completeCurrentAttempt(hasTimedOut);
     }
     

@@ -13,6 +13,8 @@ import { PitchDetectorComponent } from '../pitch-detector/pitch-detector.compone
   styleUrl: './pitch-challenge.component.scss'
 })
 export class PitchChallengeComponent implements OnInit, OnDestroy {
+  // Make Math available for use in template
+  Math = Math;
   // Challenge state
   challengeState: PitchChallengeState = {
     isActive: false,
@@ -75,9 +77,9 @@ export class PitchChallengeComponent implements OnInit, OnDestroy {
   }
 
   // Process pitch from the detector component
-  onPitchDetected(pitch: { note: string, frequency: number, clarity: number }): void {
+  onPitchDetected(pitch: { note: string, frequency: number, clarity: number, centDifference: number }): void {
     if (this.challengeState?.isActive) {
-      this.pitchChallengeService.processPitch(pitch.note, pitch.frequency, pitch.clarity);
+      this.pitchChallengeService.processPitch(pitch.note, pitch.frequency, pitch.clarity, pitch.centDifference);
     }
   }
 
@@ -178,5 +180,19 @@ export class PitchChallengeComponent implements OnInit, OnDestroy {
     if (score >= 40) return '#FFC107'; // Amber
     if (score >= 20) return '#FF9800'; // Orange
     return '#F44336'; // Red
+  }
+  
+  // Get color for tuning meter based on cent difference
+  getTuningColor(cents: number = 0): string {
+    const absCents = Math.abs(cents);
+    if (absCents < 10) {
+      return '#00FF00'; // Green - very on pitch
+    } else if (absCents < 25) {
+      return '#AAFF00'; // Yellow-green - slightly off
+    } else if (absCents < 40) {
+      return '#FFCC00'; // Yellow - somewhat off
+    } else {
+      return '#FF5500'; // Red - very off pitch
+    }
   }
 }
